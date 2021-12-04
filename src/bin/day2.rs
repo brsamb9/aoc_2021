@@ -1,8 +1,10 @@
 use std::fs;
 
-pub fn gen_day1() -> Vec<Movement> {
+pub fn gen_day() -> Vec<Movement> {
     let file = fs::read_to_string("src/inputs/day2.txt").unwrap();
-    file.lines().map(|x| Movement::from(x)).collect::<Vec<Movement>>()
+    file.lines()
+        .map(|x| Movement::from(x))
+        .collect::<Vec<Movement>>()
 }
 #[derive(Debug)]
 pub enum Movement {
@@ -42,7 +44,7 @@ impl Location {
             Movement::Forward(h) => {
                 self.1 += h;
                 self.0 += self.2 * h;
-            },
+            }
             Movement::Up(a) => self.2 -= a,
             Movement::Down(a) => self.2 += a,
         }
@@ -61,7 +63,7 @@ pub fn solve_day1_p2(data: &Vec<Movement>) -> i32 {
     starting_position.0 * starting_position.1
 }
 
-fn main(){
+fn main() {
     let data = gen_day1();
     println!(
         "P1: {}\nP2: {:?}",
@@ -69,4 +71,3 @@ fn main(){
         solve_day1_p2(&data)
     )
 }
-

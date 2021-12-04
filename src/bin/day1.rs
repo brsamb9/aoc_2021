@@ -17,7 +17,7 @@ pub fn solve_day1_p2(data: &Vec<u64>) -> u64 {
     solve_day1_p1(&summations)
 }
 
-fn main(){
+fn main() {
     let data = gen_day1();
     println!(
         "P1: {}\nP2: {:?}",
