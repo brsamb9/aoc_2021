@@ -6,6 +6,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+lazy_static = "1.4.0"
 ndarray = "0.15.4"
 ndarray-stats = "0.5.0"
 noisy_float = "0.2.0"
