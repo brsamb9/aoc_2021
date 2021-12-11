@@ -64,7 +64,7 @@ pub fn solve_day1_p2(data: &Vec<Movement>) -> i32 {
 }
 
 fn main() {
-    let data = gen_day1();
+    let data = gen_day();
     println!(
         "P1: {}\nP2: {:?}",
         solve_day1_p1(&data),
