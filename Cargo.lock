@@ -6,6 +6,7 @@ version = 3
 name = "aoc_2021_rust"
 version = "0.1.0"
 dependencies = [
+ "itertools",
  "lazy_static",
  "ndarray",
  "ndarray-stats",
