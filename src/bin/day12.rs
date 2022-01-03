@@ -1,4 +1,4 @@
-use std::{collections::HashMap, hash::Hash};
+use std::collections::HashMap;
 
 use itertools::Itertools;
 
@@ -20,44 +20,38 @@ impl CaveStructure {
         Self { edges: cave_edges }
     }
 
-    fn find_paths_to_end<'a>(
+    fn find_paths_to_end<F: Fn(&str, &[String]) -> bool + Copy>(
         &self,
         name: &str,
         mut curr_path: Vec<String>,
-        small_cave_limitation: usize,
+        small_cave_limitation: F,
     ) -> usize {
-        println!(
-            "{} {:?} {}",
-            name,
-            curr_path,
-            curr_path.iter().contains(&name.to_owned())
-        );
-        match name {
-            "end" => 1,
-            "start" if !curr_path.is_empty() => 0,
-            _ if is_small_cave(name)
-                && curr_path.iter().filter(|n| n.as_str() == name).count()
-                    == small_cave_limitation =>
-            {
-                0
-            }
-            _ => {
-                let children = self.edges.get(name).unwrap();
-                curr_path.push(name.to_owned());
-
-                children
-                    .iter()
-                    .map(|name| {
-                        self.find_paths_to_end(name, curr_path.clone(), small_cave_limitation)
-                    })
-                    .sum::<usize>()
-            }
+        if name == "end" {
+            return 1;
         }
+        if !curr_path.is_empty() && name == "start" {
+            return 0;
+        }
+        if !curr_path.is_empty()
+            && is_small_cave(name)
+            && small_cave_limitation(name, curr_path.as_slice())
+        {
+            return 0;
+        }
+
+        // dbg!(curr_path.clone());
+        curr_path.push(name.to_owned());
+
+        let children = self.edges.get(name).unwrap();
+        children
+            .iter()
+            .map(|name| self.find_paths_to_end(name, curr_path.clone(), small_cave_limitation))
+            .sum::<usize>()
     }
 }
 
 fn is_small_cave(cave: &str) -> bool {
-    cave.chars().all(|c| c.is_ascii_lowercase())
+    cave.chars().all(char::is_lowercase)
 }
 
 fn main() {
@@ -68,8 +62,28 @@ fn main() {
         .collect();
 
     let cave = CaveStructure::new(edges);
-    let part1 = cave.find_paths_to_end("start", vec![], 1);
+    let part1 =
+        cave.find_paths_to_end("start", vec![], |name, arr| arr.contains(&name.to_string()));
     dbg!(part1);
-    // let part2 = cave.find_paths_to_end("start", vec![], 2);
-    // dbg!(part2);
+    let part2 = cave.find_paths_to_end("start", vec![], |name, arr| {
+        if !arr.contains(&name.to_string()) {
+            return false;
+        }
+        let mut a: HashMap<&str, usize> = HashMap::new();
+        for sv in arr
+            .iter()
+            .filter(|s| is_small_cave(s.as_str()) && s.as_str() != "start")
+        {
+            *a.entry(sv.as_str()).or_insert(0) += 1;
+        }
+        // dbg!(a.clone());
+        let keys_has_dup = a
+            .iter()
+            .filter(|(k, v)| **v >= 2)
+            .map(|(k, _v)| k)
+            .collect::<Vec<&&str>>();
+
+        !keys_has_dup.is_empty() && (keys_has_dup.contains(&&name) || a.get(name).is_some())
+    });
+    dbg!(part2);
 }
